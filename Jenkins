@@ -1,0 +1,1011 @@
+
+#Install & Configure Jenkins Server :
+
+	- Refer to that tools/Service's Official Documentation.
+				https://www.jenkins.io/doc/book/installing/linux/
+
+1. Install the pre-requisites :::
+
+# Install Jdk:
+
+sudo -i 			
+sudo apt update -y
+
+sudo apt install openjdk-17-jre -y 						
+java -version						
+
+2. Install the Actual tool :::
+ 								
+#Install Jenkins:
+
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt-get update
+
+sudo apt-get install jenkins -y
+
+
+3. Perform Post_Installation Activities :::
+
+jenkins --version 
+
+systemctl status jenkins 
+
+Open web browser :
+
+http://<Public_IP_Address>:8080/
+
+E.g.: http://43.205.118.56:8080/
+
+cat /var/lib/jenkins/secrets/initialAdminPassword
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+
+#Configure Slave Node1 for Java Maven App. :
+
+sudo -i
+
+apt update -y 
+
+Install Java ::
+
+sudo apt update -y 
+sudo apt install openjdk-11-jre -y
+java -version
+
+Install GIT :
+
+sudo apt install git -y
+
+Install Maven - Build Tool :
+https://maven.apache.org/install.html
+
+sudo apt install maven -y 
+
+sudo apt install docker.io -y
+
+Create User in Jenkins Slave Machine & Create SSH Keys 
+
+	SSH Keys --> is composed of public and private keys 
+
+
+#Add User : 
+
+useradd devopsadmin -s /bin/bash -m -d /home/devopsadmin
+
+su - devopsadmin
+
+#ssh-keygen
+
+#for Ubuntu ::
+ssh-keygen -t rsa -b 1024 -m PEM
+
+
+ls ~/.ssh 
+
+#You should see following two files:
+
+#id_rsa - private key
+#id_rsa.pub - public
+
+
+cat id_rsa.pub > authorized_keys
+
+chown -R devopsadmin /home/devopsadmin/.ssh
+chmod 600 /home/devopsadmin/.ssh/authorized_keys
+chmod 700 /home/devopsadmin/.ssh
+
+sudo usermod -aG docker devopsadmin 
+
+As a root user : reboot the slave node.
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+			
+			
+###############
+Day 8
+7th June 2023
+###############				
+			
+			
+			
+		1. Installation of Jenkins	
+				Working with Jenkins
+				
+			Jenkins_Master		--> Install Jenkins & Create Jenkins Project 
+			
+					Build Java Application Team --> Build --> Install build tools, unit testing tool, 
+					
+					
+			Jenkins Master & Slave Architecture :::
+			
+			Jenkins Master 	--> Used to create Jenkins Jobs/Project/Pipelines 
+							-->	Schedule the Jobs to Slave Machines 
+							
+			Jenkins Slave 	--> Used to actually execute/run the Jenkins Jobs/Project				
+
+			Jenkins Master
+				- Slave1	--> Java build 			--
+				- Slave2	--> Python Build 
+				- Slave3	--> .Net
+				- Slave4	--> Angular
+				- Slave5	--> NodeJS
+			 
+			Using Jenkins Master & Slave Architecture we can distribute the workload.
+			
+			
+		AWS Platform ::: Launch AWS EC2 Instances - Ubuntu
+		
+			Launch 2 VMs 
+			
+			Master 	-> Install Jenkins 
+			
+		- Access to AWS 
+		- Connect to EC2 Instance :::
+			- EC2 Instance Connect 
+			- SSH Client in ur local Machine 	==> Tool used to connect with any remote servers
+				MobaXterm	-	for windows machine 
+					https://mobaxterm.mobatek.net/download.html
+				Putty		Mac Users
+			- Terminal		Mac Users / Linux 
+				
+				
+		AWS --> run a instance for 750 hrs / month
+		
+		10 Instances --> 75 hrs 
+		
+		
+		apt ==> is a package manager for ubuntu machine
+		
+		Linux 
+		
+			apt 	ubuntu 
+			yum 	rhel centos 
+			rpm
+			dnf 
+		
+		
+		Install Jenkins :::: 
+		
+			https://www.jenkins.io/doc/book/installing/
+
+
+sudo apt update
+sudo apt install openjdk-11-jre
+java -version
+
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+
+
+	Jenkins run as a service ==> by default runs in port 8080 
+	
+	
+	Access Jenkins Server ::::
+	
+		Post Installation activities :::
+		
+	
+	/var/lib/jenkins
+	
+	
+	Plugins are just an extension
+
+
+	Jenkins Project :::
+	
+		- Freestyle Project 	-- Manual Config. 
+		- Pipeline Project 		-- Automated.
+			
+			Java application 
+			perform build 
+
+
+
+		Jenkins Variables :::
+
+			Environment Variables
+			User Defined Variables 
+
+
+
+		to deploy the appln. 
+		
+			Dev / QA / UAT / Pre-prod / prod
+
+
+
+Next :::
+
+		- Pipeline Project 		-- Automated.
+			
+			Java application 
+			perform build,
+			create artifact 
+			slave1..
+
+		systemctl start jenkins
+		systemctl stop jenkins
+		systemctl restart jenkins
+		systemctl status jenkins
+
+
+			
+###############
+Day 9
+8th June 2023
+###############	
+
+		- Pipeline Project 		-- Automated.
+			
+			Java application 
+			perform build,
+			create artifact 
+			slave1...
+
+
+	
+		Jenkins Pipeline :::
+		
+			- Scripted Pipeline 
+			
+			- Declarative Pipeline
+			
+pipeline {
+	agent any
+
+	stages {
+		stage('SCM Checkout') {
+			steps {
+				echo 'Hello World'
+			}
+		}
+		stage('Java App Build') {
+			steps {
+				echo 'Hello Team'
+			}
+		}
+		stage('Deploy to QA Server') {
+			steps {
+				echo 'Deploy to QA'
+			}
+		}
+	}
+}
+
+
+
+
+
+
+CICD Workflow ::::
+
+		Dev Envi. ==> Developers create the src code & push the src code into src code repository.(github)
+		
+		Jenkins Pipeline :::
+		
+			SCM Checkout Stage
+				
+				
+			Build & Create Artifacts 
+					Build is a process of compiling the src code and creating artifacts. 
+					
+						Maven - Build Tool 
+							Install Maven ==> 
+							Maven Goals ==> Clean,package,test,build....
+							pom.xml ===> 
+			
+			Automated Unit Testing 
+			Deploy to QA Envi.
+
+
+
+Configure Jenkins Master & Slave Machines..
+
+
+		Jenkins_Master 		
+			Slave Machines 			
+					Login to Slave Machine :
+							Install all the required build tools 
+									git,jdk,maven
+					Create User & SSH Keys
+
+		Attach the Slave Machine in Jenkins as a Node/Agent.
+				using SSH Key based Authentication
+				
+				- Password based 
+				- tokens based 
+				- passwordless Authentication / SSH-Key based auth.
+		
+		Create the CI Pipeline to automate build 
+
+
+
+
+Java Maven Web Application ==> Project src code in github repo. 
+
+Configure Slave Node1 for Java Maven App. :
+
+	Install Java ::
+
+	sudo apt update -y 
+	sudo apt install openjdk-11-jre -y
+	java -version
+
+	Install GIT :
+
+	sudo apt install git -y
+
+	Install Maven - Build Tool :
+	https://maven.apache.org/install.html
+
+	sudo apt install maven -y 
+
+
+Create User in Jenkins Slave Machine & Create SSH Keys 
+
+	SSH Keys --> is composed of public and private keys 
+
+
+#Add User : 
+
+#useradd -m -d /home/devopsadmin devopsadmin
+#useradd devopsadmin
+
+useradd devopsadmin -s /bin/bash -m -d /home/devopsadmin
+
+su - devopsadmin
+
+#ssh-keygen
+
+#for Ubuntu ::
+ssh-keygen -t rsa -b 4096 -m PEM
+
+
+ls ~/.ssh 
+
+#You should see following two files:
+
+#id_rsa - private key
+#id_rsa.pub - public
+
+
+cat id_rsa.pub > authorized_keys
+
+chown -R devopsadmin /home/devopsadmin/.ssh
+chmod 600 /home/devopsadmin/.ssh/authorized_keys
+chmod 700 /home/devopsadmin/.ssh
+
+
+
+
+https://github.com/LoksaiETA/Java-mvn-app2.git ---> 
+
+
+pipeline {
+	agent { label 'mvnbuildserver1' }
+
+    tools {
+        maven "maven"
+    }
+
+	stages {
+		stage('SCM Checkout') {
+			steps {
+				echo 'SCM CHECKOUT'
+				git 'https://github.com/LoksaiETA/Java-mvn-app2.git'
+
+			}
+		}
+		stage('Java App Build') {
+			steps {
+				echo 'Perform Maven Build'
+				sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+			}
+		}
+		stage('Deploy to QA Server') {
+			steps {
+				echo 'Deploy to QA'
+				echo 'Hello Everyone'
+			}
+		}
+	}
+}
+
+
+###############
+Day 10
+9th June 2023
+###############	
+
+
+			Jenkins_Master 
+				Slave - Java webappln. Build --> Artifacts.
+				
+			Target Server / Hosted Servers 	VM / Computing Device.
+			
+				QA	VM --> Application Server - tomcat / nginx 
+				
+				UAT VM --> Application Server - tomcat / nginx 
+				
+				PROD VM --> Application Server - tomcat / nginx 
+				
+				
+			Jenkins_Master 
+				Slave - Java webappln. Build --> Artifacts.
+			
+			Launch Test_Server : (VM)
+				Install jdk / Tomcat Application Server 	-	runs in port 8080
+
+	Install Java ::
+
+	sudo apt update -y 
+	sudo apt install openjdk-11-jre -y
+	java -version
+	
+	
+	/usr/lib/jvm/java-11-openjdk-amd64
+	
+	Create Environment Variable :;
+	
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+
+source /etc/profile
+
+######################Install TOMCAT Application Server on Ubuntu :::
+
+sudo apt update
+sudo apt install openjdk-11-jre -y 
+java -version
+
+#edit /etc/profile & add JAVA_HOME
+
+#/usr/lib/jvm/java-11-openjdk-amd64/
+
+vi /etc/profile
+
+/usr/lib/jvm/java-11-openjdk-amd64
+
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+
+source /etc/profile
+
+Install Tomcat ::
+
+cd /opt
+wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.88/bin/apache-tomcat-8.5.88.tar.gz
+tar -xvzf /opt/apache-tomcat-8.5.88.tar.gz
+
+mv apache-tomcat-8.5.88 tomcat
+
+#Start Tomcat Server:
+#Goto:
+
+cd /opt/tomcat/bin
+./startup.sh
+
+
+###########################################333
+
+				Create User 
+				Create SSH key in tomcat server 
+				
+				
+			Deployment means??
+			
+			
+			Source Path	: target/mvn-hello-world.war
+			
+			Destination Path : /opt/tomcat/webapps/mvn-hello-world.war
+												/opt/tomcat/webapps/target/mvn-hello-world.war
+				
+				
+			In Jenkins :
+				Install Publish Over SSH Plugins 
+						got to manage Jenkins -> Plugin Manager -> 
+						Available tab -> search for Publish over SSH Plugin
+										Restart jenkins upon installation. 
+				
+				
+					Add Tomcat Server to Jenkins Master with valid private key of tomcat user
+				
+sshPublisher(publishers: [sshPublisherDesc(configName: 'TomcatServer', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '.', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/mvn-hello-world.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+
+
+
+pipeline {
+	agent { label 'mvnbuildserver1' }
+
+    tools {
+        maven "maven"
+    }
+
+	stages {
+		stage('SCM Checkout') {
+			steps {
+				echo 'SCM CHECKOUT'
+				git 'https://github.com/LoksaiETA/Java-mvn-app2.git'
+
+			}
+		}
+		stage('Java App Build') {
+			steps {
+				echo 'Perform Maven Build'
+				sh 'mvn -Dmaven.test.failure.ignore=true clean package'
+			}
+              post {
+                success {
+                  sh "echo 'Send mail on success'"
+				  mail bcc: '', body: '"Please go to ${BUILD_URL} and verify the build"', cc: 'loksaieta223@gmail.com', from: '', replyTo: '', subject: 'Build Notification', to: 'loksaieta223@gmail.com'
+                }
+                failure {
+                  sh "echo 'Send mail on failure'"
+				  mail bcc: '', body: '"Please go to ${BUILD_URL} and verify the build"', cc: 'loksaieta223@gmail.com', from: '', replyTo: '', subject: 'Build Notification', to: 'loksaieta223@gmail.com'
+                }
+              }
+		}
+
+        stage('Approve - deploy to QA'){
+            steps{
+                
+                //----------------send an approval prompt-------------
+                script {
+                   env.APPROVED_DEPLOY = input message: 'User input required Choose "yes" | "Abort"'
+                       }
+                //-----------------end approval prompt------------
+            }
+        }	
+	
+		stage('Deploy to QA Server') {
+			steps {
+				echo 'Deploy to QA'
+				echo 'Hello Everyone'				
+				script {
+				sshPublisher(publishers: [sshPublisherDesc(configName: 'TomcatServer', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '.', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/mvn-hello-world.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+				}
+			}
+		}
+	}
+}
+
+
+
+
+	Jenkins Scheduling :::
+	
+		Build periodic 	-->	
+				Used to trigger the job based upon schedule. eg. every min.
+		
+			dev servers , test servers, Prod servers (24/7)
+			8am - 10pm 
+			
+		Poll SCM 
+		
+				Used to trigger the job for eg. every 15 mins only if there is any changes happened in src code repo.
+				
+				repo1 --> dev team -- commit --> 
+					Test window -- 8,12,4
+					
+				8 - 12 
+				
+				everyday 11am 3pm ==> do a deployment to qa envi.
+		
+		
+		Github Webhook 
+				Create github webhook payload url in github.
+				
+				Enter Jenkins Master URL. eg.:
+				http://<public-IP>:8080/github-webhook/
+			
+				http://15.206.127.38:8080/github-webhook/
+				
+				for each commit, the pipeline will get triggered. 
+				
+		Notification ::::
+			-- 
+		Email - Notification Plugins ::::
+		
+Email Notification Plugins :::
+
+SMTP Server :
+smtp.gmail.com
+SMTP Authentication
+SMTP Port :: 465
+Login to Gmail :::
+Click Account Settings
+Security 
+Create App Token --- 16 
+
+
+Summary :::
+
+		Jenkins _ Master & Slave 
+			Install Jenkins 
+			Plugins 
+			Manage Jenkins Option 
+			Master and slave node config 
+			adding eternal server to jenkins using SSH 
+			create cicd pipeline 
+			
+??????????????????
+/var/lib/jenkins - jenkins default path
+plugin-it is an extension
+
+
+
+
+
+
+/////////////
+export JAVA_HOME-"/usr/lib/jvm/java-11-openjdk-11.0.25.0.9-1.amzn2.0.1.x86_64"
+export MAVEN_HOME-"/opt/apache-maven-3.8.8"
+export M2=/opt/apache-maven-3.8.8/bin
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin:$MAVEN_HOME:$M2
+
+
+
+   1  yum upadte -y
+    2  yum update -y
+    3  amazon-linux-extras install -y epel
+    4  yum install java -y
+    5  java --versiona
+    6  yum install git -y
+    7  git -v
+    8  java -v
+    9  java --version
+   10  sudo wget
+   11  Install & Configure Jenkins Server :
+   12  - Refer to that tools/Service's Official Documentation.
+   13  .https://www.jenkins.io/doc/book/installing/linux/
+   14  .
+   15  Launch AWS EC2 Instance - AMI - Ubuntu 22.04v
+   16  t2.micro - Instance Type
+   17  .
+   18  #Allow All Traffic for Demo!
+   19  Updated Inbound Rule - Port 8080
+   20  1. Install the pre-requisites :::
+   21  # Install Jdk:
+   22  sudo -i .
+   23  sudo apt update -y
+   24  sudo apt install git -y .# To install git if required
+   25  git --version
+   26  sudo apt install openjdk-17-jre -y .# previous version
+   27  java -version
+   28  2. Install the Actual tool :::
+   29   .
+   30  #Install Jenkins:
+   31  sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+   32    https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+   33  echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+   34    https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+   35    /etc/apt/sources.list.d/jenkins.list > /dev/null
+   36  sudo apt-get update
+   37  sudo apt-get install jenkins -y
+   38  3. Perform Post_Installation Activities :::
+   39  jenkins --version
+   40  systemctl status jenkins
+   41  systemctl stop jenkins
+   42  systemctl start jenkins
+   43  systemctl restart jenkins
+   44  systemctl enable jenkins
+   45  /var/lib/jenkins .# Default Installation Dir of Jenkin on Linux Box
+   46  Open web browser :
+   47  http://<Public_IP_Address>:8080/
+   48  E.g.: http://13.127.8.53:8080/
+   49  sudo -i
+   50  cat /var/lib/jenkins/secrets/initialAdminPassword
+   51  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   52  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   53  #Configure Slave Node1 for Java Maven App. :
+   54  Launch an Ubuntu Machine : v22.04
+   55  sudo -i
+   56  apt update -y
+   57  Install Java ::
+   58  sudo apt update -y
+   59  sudo apt install openjdk-17-jre -y
+   60  java -version
+   61  Install GIT :
+   62  sudo apt install git -y
+   63  git --version
+   64  Install Maven - Build Tool :
+   65  https://maven.apache.org/install.html
+   66  sudo apt install maven -y
+   67  mvn --version
+   68  Create User in Jenkins Slave Machine & Create SSH Keys
+   69  .SSH Keys --> is composed of public and private keys
+   70  #sudo apt install docker.io -y
+   71  #Add User :
+   72  useradd devopsadmin -s /bin/bash -m -d /home/devopsadmin
+   73  su - devopsadmin
+   74  #ssh-keygen
+   75  #for Ubuntu ::
+   76  #ssh-keygen -t rsa -b 2048 -m PEM#ubuntu 20.04
+   77  ssh-keygen -t ecdsa -b 521#ubuntu 22.04 or higher version of ubuntu
+   78  ls ~/.ssh
+   79  #You should see following two files:
+   80  #id_ecdsa - private key
+   81  #id_ecdsa.pub - public
+   82  #cat id_rsa.pub > authorized_keys
+   83  cat id_ecdsa.pub > authorized_keys
+   84  chmod 600 /home/devopsadmin/.ssh/*
+   85  # Add devopsadmin user to docker group. Run this command as a root user
+   86  #usermod -aG docker devopsadmin
+   87  .
+   88  Login to Jenkins - Manage Jenkins - Attach the Slave Node to jenkins Master
+   89  .Goto to Manage Jenkins
+   90  .Select Nodes
+   91  .On Nodes Dashboard, Click on New Node
+   92  .Give Node Name, and choose permanent agent.
+   93  #####################Install TOMCAT Application Server on Ubuntu :::
+   94  Launch New Node - Ubuntu - 22.04 ami
+   95  Enable port 8080
+   96  Install Tomcat ::  https://tomcat.apache.org/download-80.cgi
+   97  https://tomcat.apache.org/
+   98  sudo -i
+   99  apt update -y
+  100  apt-get install default-jdk -y
+  101  java --version
+  102  cd /opt/
+  103  wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.99/bin/apache-tomcat-8.5.99.tar.gz
+  104  tar -xvzf /opt/apache-tomcat-8.5.99.tar.gz
+  105  mv apache-tomcat-8.5.99 tomcat
+  106  cd tomcat/bin/
+  107  ./startup.sh# Used to Start the Tomcat Server
+  108  Open web browser :
+  109  http://<Public_IP_Address>:8080/
+  110  E.g.: http://13.127.8.53:8080/
+  111  ###########################################
+  112  #Add User :
+  113  useradd devopsadmin -s /bin/bash -m -d /home/devopsadmin
+  114  su - devopsadmin
+  115  #ssh-keygen
+  116  #for Ubuntu ::
+  117  #ssh-keygen -t rsa -b 2048 -m PEM#ubuntu 20.04
+  118  ssh-keygen -t ecdsa -b 521#ubuntu 22.04 or higher version of ubuntu
+  119  ls ~/.ssh
+  120  #You should see following two files:
+  121  #id_ecdsa - private key
+  122  #id_ecdsa.pub - public
+  123  #cat id_rsa.pub > authorized_keys
+  124  cat id_ecdsa.pub > authorized_keys
+  125  chmod 600 /home/devopsadmin/.ssh/*
+  126  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  127  #make devopsadmin user as a owner to tomcat dir :
+  128  chown -R devopsadmin /opt/tomcat
+  129  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  130  .Publish Over SSH Plugin is used to copt the artifacts from Jenkins Slave Node to Tomcat Server
+  131  .
+  132  .Install Publish Over SSH Plugin in Jenkins Master.
+  133  sudo wget https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+  134  sudo tar xf apache-maven-3.8.8-bin.tar.gz -C /opt
+  135  sudo tar xf apache-maven-3.8.8-bin.tar.gz /opt
+  136  ls
+  137  cd /opt/
+  138  ls
+  139  sudo ln -s /opt/apache-maven-3.8.8/ /opt/maven
+  140  ls
+  141  cd maven/
+  142  ls
+  143  cd bin/
+  144  ls
+  145  mvn
+  146  mvn --version
+  147  cd /usr/lib/jvm/
+  148  ls
+  149  cd java-17-amazon-corretto.x86_64/
+  150  pwd
+  151  cd ~
+  152  cd /opt/apache-maven-3.8.8/
+  153  ls
+  154  pwd
+  155  ls -a
+  156  vi .bash_profile
+  157  vi .bashrc
+  158  vi .bash_profile
+  159  mvn --version
+  160  source ~/.bash_profile
+  161  source ~/.bashrc
+  162  mvn --version
+  
+  
+  
+1:52:45
+
+
+pipeline {
+    agent {
+	label 'slave1'
+	}
+
+    tools {
+        
+       maven 'maven-3.8.8'
+    }
+
+    stages {
+        stage('SCM-Checkout') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/LoksaiETA/Java-mvn-app2.git'
+				
+				}
+			}
+		stage('Build'){
+			steps{
+
+                // Run Maven on a Unix agent.
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+
+                // To run Maven on a Windows agent, use
+                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+		}
+
+            
+        }
+    }
+
+
+https://github.com/sy0097/Java-mvn-app2.git
+mvn -Dmaven.test.failure.ignore=true clean package
+Pipeline for java-maven-app2
+pipeline {
+    agent {
+	label 'slave1'
+	}
+
+    tools {
+        
+       maven 'Maven-3.8.8'
+    }
+
+    stages {
+        stage('SCM-Checkout') {
+            steps {
+                // Get some code from a GitHub repository
+                git 'https://github.com/sy0097/Java-mvn-app2.git'
+				
+				}
+			}
+		stage('Build'){
+			steps{
+
+                // Run Maven on a Unix agent.
+                //sh "mvn clean install"
+                sh "mvn -Dmaven.test.failure.ignore=true clean package"
+
+                // To run Maven on a Windows agent, use
+                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+		}
+
+            
+        }
+    }
+
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-11.0.25.0.9-1.amzn2.0.1.x86_64"
+PATH=$PATH:$HOME/bin:$JAVA_HOME/bin
+
+
+  1  amazon-linux-extras install epel -y
+    2  yum install git -y
+    3  amazon-linux-extras install openjdk-java11 -y
+    4  amazon-linux-extras install openjdk11 -y
+    5  amazon-linux-extras install java-openjdk17 -y
+    6  amazon-linux-extras install java-openjdk11 -y
+    7  java -version
+    8  sudo wget https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+    9  ls
+   10  sudo tar xf apache-maven-3.8.8-bin.tar.gz -C /opt
+   11  sudo tar xf apache-maven-3.8.8-bin.tar.gz /opt
+   12  sudo ln -s /opt/apache-maven-3.8.8/ /opt/maven
+   13  ls
+   14  cd /opt/
+   15  ls
+   16  cd maven/
+   17  ls
+   18  cd b
+   19  cd bin/
+   20  ls
+   21  mvn
+   22  cd ~
+   23  ls -a
+   24  vi .bash_profile
+   25  java --version
+   26  cd /usr/lib/jvm
+   27  ls
+   28  cd java-11-openjdk-11.0.25.0.9-1.amzn2.0.1.x86_64/
+   29  pwd
+   30  cd ~
+   31  vi .bash_profile
+   32  vi .bashrc
+   33  source ~/.bashrc
+   34  source ~/.bash+pr
+   35  source ~/.bash_profile
+   36  mvn -v
+   37  useradd -m -d /home/devopsadmin
+   38  useradd -m -d /home/devopsadmin devopsadmin
+   39  passwd devopsadmin
+   40  su - devopsadmin
+   41  chown -R devopsadmin:devpsadmin /home/devopsadmin/.ssh/
+   42  chown -R devopsadmin:devopsadmin /home/devopsadmin/.ssh/
+   43  chmod 600 /home/devopsadmin/.ssh/authorized_keys
+   44  chmod 700 /home/devopsadmin/.ssh/
+   45  sudo amazon-linux-extras enable java-openjdk17
+   46  sudo yum install -y java-17-openjdk
+   47  java --version
+   48  cd //usr/lib/jvm
+   49  ls
+   50  cd ~
+   51  yum install java
+   52  java --version
+   53  ls -a
+   54  vi .bash_profile
+   55  vi .bashrc
+   56  source ~/.bashrc
+   57  source ~/.bash_
+   58  source ~/.bash_profile
+   59  mvn -v
+   60  su - devopsadmin
+   61  ls
+   62  su - devopsadmin
+   
+   
+   
+   
+   pipeline {
+    agent {
+	label 'slave1'
+	}
+
+    tools {
+        
+       maven 'Maven-3.8.8'
+    }
+
+    stages {
+        stage('SCM-Checkout') {
+            steps {
+                // Get some code from a GitHub repository
+                git "${Github_URL}"
+				
+				}
+			}
+		stage('Build'){
+			steps{
+
+                // Run Maven on a Unix agent.
+                //sh "mvn clean install"
+                sh "${Mvn_cmd}"
+
+                // To run Maven on a Windows agent, use
+                // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+            }
+		}
+        stage('Deploy'){
+			steps{
+            script{
+                sshPublisher(publishers: [sshPublisherDesc(configName: 'Tomcat', transfers: [sshTransfer(cleanRemote: false, excludes: '', execCommand: '', execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false, patternSeparator: '[, ]+', remoteDirectory: '.', remoteDirectorySDF: false, removePrefix: 'target/', sourceFiles: 'target/mvn-hello-world.war')], usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)])
+            }
+            }
+            }
+		
+
+            
+        }
+    }
+
